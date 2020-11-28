@@ -13,16 +13,18 @@ const multer = Multer({
   },
 });
 
-const directoryName = 'cf-short';
-const directoryPath = "../"+directoryName+"/";
-const newDirectoryName = directoryName + "-reversed";
-const newDirectoryPath = "../"+newDirectoryName+"/";
 
 router.put(
-  `/reverseFolder/:`,
+  `/reverseFolder/:folderName`,
   async (req, res) => {
 
     try {
+      
+      const directoryName = req.params.folderName;
+      const directoryPath = "../raw_data/"+directoryName+"/";
+      const newDirectoryName = directoryName + "-reversed";
+      const newDirectoryPath = "../raw_data/"+newDirectoryName+"/";
+
       const arr = [];
       const dir = await fs.promises.opendir(directoryPath)
       for await (const file of dir)

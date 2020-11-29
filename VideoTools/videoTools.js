@@ -13,6 +13,48 @@ const multer = Multer({
   },
 });
 
+const videoshow = require('videoshow')
+
+router.put(
+  `/createVideo`,
+  async (req, res) => {
+    const {videoOptions, finalVideoPath, images, delayTime} = req.body;
+
+    //DATA EXAMPLES
+      // const delayTime = 1
+      // const finalVideoPath = '/whatever_path_works_for_you'
+
+      // // setup videoshow options
+      // const videoOptions = {
+      //   fps: 24,
+      //   transition: false,
+      //   videoBitrate: 1024 ,
+      //   videoCodec: 'libx264', 
+      //   size: '640x640',
+      //   outputOptions: ['-pix_fmt yuv420p'],
+      //   format: 'mp4' 
+      // }
+
+      // // array of images to make the 'videoshow' from
+      // const images = [
+      //   {path: path1, loop: delayTime}, 
+      //   {path: path2, loop: delayTime}, 
+      //   ...etc  
+      // ]    
+
+    videoshow(images, videoOptions)
+    .save(finalVideoPath)
+    .on('start', function (command) { 
+      console.log('encoding ' + finalVideoPath + ' with command ' + command) 
+    })
+    .on('error', function (err, stdout, stderr) {
+      return Promise.reject(new Error(err)) 
+    })
+    .on('end', function (output) {
+      res.send('done');
+    })
+  }
+)
 
 router.put(
   `/reverseFolder/:folderName`,

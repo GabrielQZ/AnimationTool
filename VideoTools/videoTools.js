@@ -63,14 +63,18 @@ router.put(
     try {
       
       const directoryName = req.params.folderName;
-      const directoryPath = "../raw_data/"+directoryName+"/";
+      const directoryPath = process.cwd() + "\\raw_data\\"+directoryName+"\\";
       const newDirectoryName = directoryName + "-reversed";
-      const newDirectoryPath = "../raw_data/"+newDirectoryName+"/";
+      const newDirectoryPath = "./raw_data/"+newDirectoryName+"/";
+      
+      // console.log(newDirectoryPath);
 
       const arr = [];
       const dir = await fs.promises.opendir(directoryPath)
       for await (const file of dir)
         arr.unshift(file.name);
+
+      // console.log(arr);
 
       // arr.sort((a,b) => a-b);
 
@@ -90,20 +94,38 @@ router.put(
 
         const photoNum = "0".repeat(arrLenStr - i.toString().length) + i;
 
+        // console.log(newDirectoryPath+photoNum+name.replace('png', 'txt'));
+        // fs.writeFile(newDirectoryPath+photoNum+name.replace('png', 'txt'), "test", 'utf8')
         // console.log(photoNum, i);
-        fs.readFile(directoryPath+name, (err, data) => {
-          // console.log(data.buffer);
-          const b = Buffer.from(data.buffer);
-          fs.writeFile(newDirectoryPath+photoNum+name, b, () => {
-            // console.log("wrote " + name);
-          })
-        })
+        try {
+            
+            const data =  fs.readFileSync(directoryPath+name)
+            // const b = Buffer.from(data.buffer);
+            // console.log(b);
 
+            fs.writeFileSync(newDirectoryPath+photoNum+name, b, 'base64')
+            
+        } catch (error) {
+          console.log(error);
+        }
+
+        // fs.readFileSync(directoryPath+name, (err, data) => {
+        //   // console.log(data.buffer);
+        //   // console.log(newDirectoryPath+photoNum+name);
+        //   const b = Buffer.from(data.buffer);
+        //   // console.log(b);
+        //   fs.writeFile(newDirectoryPath+photoNum+name, b, 'base64',() => {
+        //     // console.log("wrote " + name);
+        //   })
+        // })
+
+
+        console.log(read);
       });  
-      res.send("done")
+      // res.send("done")
 
     } catch (error) {
-      res.send(err.message)
+      res.send(error.message)
     }
   }
 
